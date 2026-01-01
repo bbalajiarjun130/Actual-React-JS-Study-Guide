@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export function useFetch(fetchFn, initialValue) {
     const [isFetching, setIsFetching] = useState();
     const [error, setError] = useState();
-    const [fetchData, setFetchedData] = useState(initialValue);
+    const [fetchedData, setFetchedData] = useState(initialValue);
 
     useEffect(() => {
         async function fetchData() {
@@ -23,7 +23,7 @@ export function useFetch(fetchFn, initialValue) {
 
     return {
         isFetching, 
-        fetchData, 
+        fetchedData, 
         error
     }
 }
