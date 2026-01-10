@@ -1,71 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Column from './components/Column';
+import { useTaskManager } from './hooks/useTaskManager';
+import { useDragAndDrop } from './hooks/useDragAndDrop';
+import { columnConfig, COLUMN_TYPES } from './config/columnConfig';
 
 export default function App() {
-  const [columns, setColumns] = useState({
-    todo: [],
-    inProgress: [],
-    complete: []
+  // Custom hooks handle specific responsibilities (SRP + DIP)
+  const { tasks, addTask, deleteTask, moveTask } = useTaskManager({
+    [COLUMN_TYPES.TODO]: [],
+    [COLUMN_TYPES.IN_PROGRESS]: [],
+    [COLUMN_TYPES.COMPLETE]: []
   });
-  
-  const [draggedTask, setDraggedTask] = useState(null);
 
-  const columnConfig = {
-    todo: { 
-      title: 'To Do', 
-      color: 'from-amber-400 to-orange-500', 
-      bgGradient: 'from-amber-50 to-orange-50' 
-    },
-    inProgress: { 
-      title: 'In Progress', 
-      color: 'from-blue-400 to-indigo-500', 
-      bgGradient: 'from-blue-50 to-indigo-50' 
-    },
-    complete: { 
-      title: 'Complete', 
-      color: 'from-emerald-400 to-teal-500', 
-      bgGradient: 'from-emerald-50 to-teal-50' 
-    }
-  };
-
-  const handleDragStart = (task, sourceColumn) => {
-    setDraggedTask({ task, sourceColumn });
-  };
-
-  const handleDrop = (targetColumn) => {
-    if (!draggedTask) return;
-    
-    const { task, sourceColumn } = draggedTask;
-    
-    if (sourceColumn === targetColumn) return;
-    
-    setColumns(prev => ({
-      ...prev,
-      [sourceColumn]: prev[sourceColumn].filter(t => t.id !== task.id),
-      [targetColumn]: [...prev[targetColumn], task]
-    }));
-    
-    setDraggedTask(null);
-  };
-
-  const addTask = (column, taskText) => {
-    const newTask = {
-      id: Date.now(),
-      text: taskText
-    };
-    
-    setColumns(prev => ({
-      ...prev,
-      [column]: [...prev[column], newTask]
-    }));
-  };
-
-  const deleteTask = (column, taskId) => {
-    setColumns(prev => ({
-      ...prev,
-      [column]: prev[column].filter(t => t.id !== taskId)
-    }));
-  };
+  const { handleDragStart, handleDrop } = useDragAndDrop(moveTask);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
@@ -137,12 +84,13 @@ export default function App() {
         </header>
         
         <div className="flex gap-6 overflow-x-auto pb-4">
+          {/* OCP: Using configuration, easy to add new columns */}
           {Object.entries(columnConfig).map(([columnKey, config], index) => (
             <Column
               key={columnKey}
               columnKey={columnKey}
               config={config}
-              tasks={columns[columnKey]}
+              tasks={tasks[columnKey]}
               onDragStart={handleDragStart}
               onDrop={handleDrop}
               onAddTask={addTask}

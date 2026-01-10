@@ -45,7 +45,7 @@ export default function Column({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden h-full flex flex-col noise-texture min-h-[700px]">
+      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col noise-texture">        
         <div className={`bg-gradient-to-r ${config.color} p-6 text-white`}>
           <h2 className="text-2xl font-bold tracking-tight flex items-center justify-between">
             {config.title}
@@ -55,7 +55,7 @@ export default function Column({
           </h2>
         </div>
         
-        <div className="p-6 flex-1 space-y-3 overflow-y-auto max-h-[600px]">
+        <div className="p-6 flex-1 space-y-3 overflow-y-auto max-h-[300px]">
           {tasks.map((task, idx) => (
             <TaskCard
               key={task.id}
